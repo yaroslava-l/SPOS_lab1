@@ -18,7 +18,6 @@ public class KeyboardHandler {
         frame.setFocusable(true);
     }
 
-
     private class KeyListener extends KeyAdapter implements ActionListener {
 
         @Override

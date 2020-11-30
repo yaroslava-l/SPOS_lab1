@@ -16,13 +16,11 @@ public class Server {
     private static final HashMap<Integer, String> results = new HashMap<>();
     private static ArrayList<Process> clientProcesses = new ArrayList<>();
 
-
     public Server(String host, int port, int variant, int maxConnections) {
         this.address = new InetSocketAddress(host, port);
         this.variant = variant;
         this.maxConnections = maxConnections;
     }
-
     public void run() throws IOException {
         new Thread( ( ) -> {
             KeyboardHandler keyboardHandler = new KeyboardHandler();
@@ -61,7 +59,6 @@ public class Server {
                     buffer.get(data);
                     buffer.clear();
                     String gotData = new String(data);
-                    // handle(channel);
                     System.out.println("Got:" + gotData);
                     analyzeResult(gotData);
 
@@ -98,7 +95,6 @@ public class Server {
             e.printStackTrace();
         }
     }
-
     /**
      * The function of working with clients
      *
@@ -109,63 +105,6 @@ public class Server {
         startProcess("f");
         startProcess("g");
     }
-
-    /**
-     * Function of sending message to the client
-     *
-     * @param socket
-     */
-    private void sendMessage(SocketChannel socket){
-        try{
-            ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-            String s = String.valueOf(this.variant);
-            byteBuffer.put(s.getBytes());
-            byteBuffer.flip();
-            socket.write(byteBuffer);
-            byteBuffer.clear();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Function of working with the socket
-     *
-     * @param socket
-     */
-    private void handle(SocketChannel socket) throws IOException {
-        try {
-            sendMessage(socket);
-
-            read(socket);
-
-        } catch (IOException e) {
-            close();
-        }
-    }
-
-    /**
-     * Function that reading message from client
-     *
-     * @throws IOException
-     */
-    private void read(SocketChannel socket) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        int numRead = socket.read(byteBuffer);
-        if (numRead == -1) {
-            socket.close();
-            return;
-        }
-        //creating byte array for message
-        byte[] data = new byte[numRead];
-        byteBuffer.flip();
-        byteBuffer.get(data);
-        byteBuffer.clear();
-        String gotData = new String(data);
-        System.out.println("Got:" + gotData);
-        analyzeResult(gotData);
-    }
-
     /**
      * Function that analyzing result from client
      *
@@ -188,7 +127,6 @@ public class Server {
         maxConnections--;
 
     }
-
     /**
      * Getter for hashmap (my results)
      *
