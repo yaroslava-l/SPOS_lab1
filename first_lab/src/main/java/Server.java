@@ -21,11 +21,12 @@ public class Server {
         this.variant = variant;
         this.maxConnections = maxConnections;
     }
+
     public void run() throws IOException {
-        new Thread( ( ) -> {
+        new Thread(() -> {
             KeyboardHandler keyboardHandler = new KeyboardHandler();
             keyboardHandler.start();
-        } ).start();
+        }).start();
         try {
             socketServer = ServerSocketChannel.open();
             socketServer.configureBlocking(false);
@@ -42,13 +43,6 @@ public class Server {
                 //blocking wait for events
                 SocketChannel channel = socketServer.accept(); // getting channel
                 if (channel != null) {
-
-                    //server operations (writing and reading from socket)
-                    buffer.clear();
-                    buffer.put(String.valueOf(variant).getBytes());
-                    buffer.flip();
-                    channel.write(buffer);
-                    buffer.clear();
                     int size = channel.read(buffer);
                     if (size == -1) {
                         channel.close();
@@ -83,9 +77,9 @@ public class Server {
         try{
             ProcessBuilder builder=null;
             if(s.equals("f"))
-                builder=new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_f_jar\\first_lab.client-f.jar");
+                builder=new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_f_jar\\first_lab.client-f.jar", String.valueOf(variant));
             else if(s.equals("g"))
-                builder=new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_g_jar\\first_lab.client-g.jar");
+                builder=new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_g_jar\\first_lab.client-g.jar", String.valueOf(variant));
 
             Process process = builder.start();
             System.out.println(process.isAlive());

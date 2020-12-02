@@ -1,5 +1,5 @@
-
 import spos.lab1.demo.IntOps;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -11,11 +11,14 @@ import java.nio.channels.SocketChannel;
 public class ClientGx {
     private static final int port = 2020;
     private static SocketChannel socket;
+    private int variant;
+
     /**
      * Constructor
      */
-    public ClientGx() {
+    public ClientGx(int variant) {
         try {
+            this.variant = variant;
             InetSocketAddress address = new InetSocketAddress("localhost", port);
             socket = SocketChannel.open(address);
         } catch (IOException e) {
@@ -24,26 +27,22 @@ public class ClientGx {
     }
 
     void run() throws IOException, InterruptedException {
+
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        socket = SocketChannel.open(new InetSocketAddress("localhost", 9000));
-        int readLenth = socket.read(buffer);
-        buffer.flip();
-        byte[] bytes = new byte[readLenth];
-        buffer.get(bytes);
-        String result = new String(bytes);
 
-        buffer.clear();
-        socket.close();
-        int value =  IntOps.funcG(Integer.parseInt(result));
+        int value = IntOps.funcG(Integer.parseInt(String.valueOf(variant)));
         socket = SocketChannel.open(new InetSocketAddress("localhost", 9000));
 
-        result = value + " g(x)";
+        String result = value + " g(x)";
         buffer.put(result.getBytes());
         buffer.flip();
         socket.write(buffer);
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        new ClientGx().run();
+        int variant = Integer.parseInt(args[0]);
+
+        new ClientGx(variant).run();
+
     }
 }
