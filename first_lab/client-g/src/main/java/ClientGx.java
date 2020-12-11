@@ -9,16 +9,14 @@ import java.nio.channels.SocketChannel;
  * Client class
  */
 public class ClientGx {
-    private static final int port = 2020;
+    private static final int port = 9000;
     private static SocketChannel socket;
-    private int variant;
 
     /**
      * Constructor
      */
-    public ClientGx(int variant) {
+    public ClientGx() {
         try {
-            this.variant = variant;
             InetSocketAddress address = new InetSocketAddress("localhost", port);
             socket = SocketChannel.open(address);
         } catch (IOException e) {
@@ -30,17 +28,23 @@ public class ClientGx {
 
         ByteBuffer buffer = ByteBuffer.allocate(1024);
 
+        while(socket.read(buffer) == 0) {}
+
+        buffer.rewind();
+
+        int variant = buffer.getInt();
+        buffer.clear();
+
         int value = IntOps.funcG(variant);
 
         String result = value + " g(x)";
         buffer.put(result.getBytes());
-        buffer.flip();
+        buffer.rewind();
         socket.write(buffer);
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        int variant = Integer.parseInt(args[0]);
-        new ClientGx(variant).run();
+        new ClientGx().run();
 
     }
 }

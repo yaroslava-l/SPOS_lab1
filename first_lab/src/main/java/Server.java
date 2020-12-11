@@ -47,16 +47,21 @@ public class Server {
 
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         while (calculateEnable) {
-
             SocketChannel channel = socketServer.accept(); // getting channel
             if (channel != null) {
+                buffer.putInt(variant);
+                buffer.rewind();
+                channel.write(buffer);
+
+                buffer.clear();
+
                 int size = channel.read(buffer);
                 if (size == -1) {
                     channel.close();
                     continue;
                 }
                 byte[] data = new byte[size];
-                buffer.flip();
+                buffer.rewind();
                 buffer.get(data);
                 buffer.clear();
                 String gotData = new String(data);
@@ -79,9 +84,9 @@ public class Server {
         try {
             ProcessBuilder builder = null;
             if (s.equals("f"))
-                builder = new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_f_jar\\first_lab.client-f.jar", String.valueOf(variant));
+                builder = new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_f_jar\\first_lab.client-f.jar");
             else if (s.equals("g"))
-                builder = new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_g_jar\\first_lab.client-g.jar", String.valueOf(variant));
+                builder = new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_g_jar\\first_lab.client-g.jar");
 
             Process process = builder.start();
             System.out.println(process.isAlive());
