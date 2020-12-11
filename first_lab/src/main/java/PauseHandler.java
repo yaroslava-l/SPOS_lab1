@@ -2,12 +2,11 @@
 import java.util.Scanner;
 
 public class PauseHandler {
-    private static final int WAIT_TIME = 15000;
+    private static final int WAIT_TIME = 10000;
 
     public static void stop() {
 
         System.out.println("The user cancelled the calculation of function");
-
         for (Integer key: Server.getResults().keySet()) {
             if (Server.getResults().get(key).equals("g(x)") && Server.getResults().size() == 1) {
                 System.out.println("The user cancelled the calculation because function F hangs");

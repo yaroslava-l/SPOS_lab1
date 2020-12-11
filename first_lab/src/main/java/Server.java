@@ -20,85 +20,87 @@ public class Server {
         this.address = new InetSocketAddress(host, port);
         this.variant = variant;
         this.maxConnections = maxConnections;
-    }
 
-    public void run() throws IOException {
-        new Thread(() -> {
-            KeyboardHandler keyboardHandler = new KeyboardHandler();
-            keyboardHandler.start();
-        }).start();
         try {
             socketServer = ServerSocketChannel.open();
             socketServer.configureBlocking(false);
             socketServer.socket().bind(address);
-
             System.out.println("Server started!");
 
             //starting clients
             startClients(this.variant);
 
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            while (calculateEnable) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                //blocking wait for events
-                SocketChannel channel = socketServer.accept(); // getting channel
-                if (channel != null) {
-                    int size = channel.read(buffer);
-                    if (size == -1) {
-                        channel.close();
-                        continue;
-                    }
-                    byte[] data = new byte[size];
-                    buffer.flip();
-                    buffer.get(data);
-                    buffer.clear();
-                    String gotData = new String(data);
-                    System.out.println("Got:" + gotData);
-                    analyzeResult(gotData);
+    public void run() throws IOException {
+        if (this.variant == 4 || this.variant == 5) {
+            new Thread(() -> {
+                KeyboardHandler keyboardHandler = new KeyboardHandler();
+                keyboardHandler.start();
+            }).start();
+        }
 
-                    //checking connections
-                    if (this.maxConnections == 0) {
-                        this.calculateEnable = false;
-                    }
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        while (calculateEnable) {
+
+            SocketChannel channel = socketServer.accept(); // getting channel
+            if (channel != null) {
+                int size = channel.read(buffer);
+                if (size == -1) {
+                    channel.close();
+                    continue;
                 }
+                byte[] data = new byte[size];
+                buffer.flip();
+                buffer.get(data);
+                buffer.clear();
+                String gotData = new String(data);
+                System.out.println("Got:" + gotData);
+                analyzeResult(gotData);
 
+                //checking connections
+                if (this.maxConnections == 0) {
+                    this.calculateEnable = false;
+                }
             }
 
-        } catch (IOException | InterruptedException e) {
-            close();
         }
     }
 
     /**
      * The function of starting processes
-     *
      */
-    private void startProcess(String s) throws InterruptedException{
-        try{
-            ProcessBuilder builder=null;
-            if(s.equals("f"))
-                builder=new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_f_jar\\first_lab.client-f.jar", String.valueOf(variant));
-            else if(s.equals("g"))
-                builder=new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_g_jar\\first_lab.client-g.jar", String.valueOf(variant));
+    private void startProcess(String s) {
+        try {
+            ProcessBuilder builder = null;
+            if (s.equals("f"))
+                builder = new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_f_jar\\first_lab.client-f.jar", String.valueOf(variant));
+            else if (s.equals("g"))
+                builder = new ProcessBuilder("java", "-jar", "D:\\3курс\\SPOS\\operating_system-master\\first_lab\\out\\artifacts\\first_lab_client_g_jar\\first_lab.client-g.jar", String.valueOf(variant));
 
             Process process = builder.start();
             System.out.println(process.isAlive());
             clientProcesses.add(process);
 
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     /**
      * The function of working with clients
-     *
-     *
      */
     private void startClients(int variant) throws IOException, InterruptedException {
         //connect and run our server-clients
         startProcess("f");
         startProcess("g");
     }
+
     /**
      * Function that analyzing result from client
      *
@@ -121,6 +123,7 @@ public class Server {
         maxConnections--;
 
     }
+
     /**
      * Getter for hashmap (my results)
      *
@@ -149,15 +152,14 @@ public class Server {
     /**
      * Function that closing server
      */
-    public static void close()  {
-        try{
+    public static void close() {
+        try {
             for (Process proc : clientProcesses) {
                 proc.destroy();
             }
             socketServer.close();
             results.clear();
-
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

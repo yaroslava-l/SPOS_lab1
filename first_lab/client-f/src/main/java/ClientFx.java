@@ -29,8 +29,7 @@ public class ClientFx {
     void run() throws IOException, InterruptedException {
 
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        int value = IntOps.funcF(Integer.parseInt(String.valueOf(variant)));
-        socket = SocketChannel.open(new InetSocketAddress("localhost", 9000));
+        int value = IntOps.funcF(variant);
 
         String result = value + " f(x)";
         buffer.put(result.getBytes());

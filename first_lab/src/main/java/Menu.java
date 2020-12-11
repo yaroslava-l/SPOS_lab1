@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public class Menu {
-    public void menu() throws IOException {
+    public void menu() {
        while (true){
             int select;
             Scanner selector = new Scanner(System.in);
@@ -22,9 +22,13 @@ public class Menu {
             if (select == -1){
                 System.exit(-1);
             }
-            else if(select>=0 && select<7){
+            else if(select>=0 && select<6){
                 Server mainServer =  new Server("localhost", 9000, select,2);
-                mainServer.run();
+
+                try {
+                    mainServer.run();
+                } catch (IOException e) { }
+
                 if(Server.getResults().size()==2||Server.getResults().containsKey(0)) {
                     System.out.println("");
                     System.out.println("RESULT OF MULTIPLY: " + mainServer.getMultiplication() + "\n\n");

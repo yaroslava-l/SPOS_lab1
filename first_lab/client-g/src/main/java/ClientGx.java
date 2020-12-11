@@ -30,8 +30,7 @@ public class ClientGx {
 
         ByteBuffer buffer = ByteBuffer.allocate(1024);
 
-        int value = IntOps.funcG(Integer.parseInt(String.valueOf(variant)));
-        socket = SocketChannel.open(new InetSocketAddress("localhost", 9000));
+        int value = IntOps.funcG(variant);
 
         String result = value + " g(x)";
         buffer.put(result.getBytes());
@@ -41,7 +40,6 @@ public class ClientGx {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         int variant = Integer.parseInt(args[0]);
-
         new ClientGx(variant).run();
 
     }

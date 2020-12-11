@@ -10,12 +10,13 @@ public class KeyboardHandler {
     public void start() {
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(0, 0);
+        frame.setSize(200, 100);
         frame.setVisible(true);
         frame.setFocusable(true);
         frame.setFocusTraversalKeysEnabled(false);
         frame.addKeyListener(new KeyListener());
         frame.setFocusable(true);
+
     }
 
     private class KeyListener extends KeyAdapter implements ActionListener {
